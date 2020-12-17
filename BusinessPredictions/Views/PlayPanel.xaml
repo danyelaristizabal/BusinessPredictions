@@ -1,0 +1,49 @@
+﻿<UserControl x:Class="BusinessPredictions.PlayPanel"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:BusinessPredictions"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800" >
+    <Grid Background="CadetBlue">
+        <Grid Name="MainGridWrapper" Margin="20 0 20 20">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition MaxHeight="60" Height="*"/>
+                <RowDefinition Height="2*"/>
+                <RowDefinition Height="2*"/>
+            </Grid.RowDefinitions>
+            
+            <Grid Grid.Row="0"  Grid.Column="0" Grid.ColumnSpan="9">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <Label Content="{Binding DataContext.ConcatenatedSentence, RelativeSource={RelativeSource AncestorType=Grid}}"  Grid.Row="1" VerticalAlignment="Center" FontStyle="Italic" FontSize="25"  HorizontalAlignment="Center"/>
+            </Grid>
+        
+            <Border Margin="10 30" Grid.Row="1" Grid.RowSpan="2" Grid.Column="2" Background="WhiteSmoke" BorderBrush="#FF000000"  BorderThickness="0" CornerRadius="11" >
+                <ListBox ItemsSource="{Binding DataContext.Subjects, RelativeSource={RelativeSource AncestorType=Grid}}" SelectedItem="{Binding RightSelectedSubject}"  Margin="5" Grid.Row="2" Grid.RowSpan="2" Grid.Column="0" Grid.ColumnSpan='3'>
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding SubjectName}"  FontSize="16"/>
+                        </DataTemplate> 
+                    </ListBox.ItemTemplate>
+                </ListBox>
+            </Border>
+
+            <Border Margin="10 30" Grid.Row="1" Grid.RowSpan="2" Background="WhiteSmoke" BorderBrush="#FF000000"  BorderThickness="0" CornerRadius="11" >
+                <ListBox  ItemsSource="{Binding DataContext.Subjects, RelativeSource={RelativeSource AncestorType=Grid}}" SelectedItem="{Binding LeftSelectedSubject}"   Margin="5" Grid.Row="2" Grid.RowSpan="2" Grid.Column="0" Grid.ColumnSpan='3'>
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding SubjectName}" Focusable="False"  FontSize="16"/>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+            </Border>
+        </Grid>
+    </Grid>
+</UserControl>
