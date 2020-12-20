@@ -37,7 +37,6 @@ namespace BusinessPredictions
                         break;
 
                     case Key.Back:
-                        AdminWrapperViewModel.DeleteSelected(txtBox);
                         break;
 
                     case Key.F5:
@@ -50,5 +49,36 @@ namespace BusinessPredictions
         }
         private void TextBox_OnKeyDown(object sender, KeyEventArgs e) => CallActionClickHitted((TextBox)sender, e);
         private void Clear_ButtonClick(object sender, RoutedEventArgs e) => AdminWrapperViewModel.ClearAllSelected();
+
+        private async void DeleteSelectedElement_Click(object sender, RoutedEventArgs e)
+        {
+            if (_lastSelectedListBoxItem != null)
+                AdminWrapperViewModel.DeleteSelected(_lastSelectedListBoxItem);
+            else
+                MessageBox.Show("Please choose an element to delete from the lists");
+        }
+
+        private object _lastSelectedListBoxItem;
+        private object _lastSelectedTextBoxDataContext;
+
+        private void ListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (sender is ListBox focusedlistBox)
+                _lastSelectedListBoxItem = focusedlistBox.SelectedItem;
+        }
+
+        private void AddElement_Click(object sender, RoutedEventArgs e)
+        {
+            if (_lastSelectedTextBoxDataContext != null)
+                AdminWrapperViewModel.AddSelected(_lastSelectedTextBoxDataContext);
+            else
+                MessageBox.Show("Please choose an element to add from the lists");
+        }
+
+        private void TextChangedInput_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (sender is TextBox texBox)
+                _lastSelectedTextBoxDataContext = texBox.DataContext;
+        }
     }
 }

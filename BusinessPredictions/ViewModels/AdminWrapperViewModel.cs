@@ -38,17 +38,6 @@ namespace BusinessPredictions
             }
         }
 
-        private bool _idLeft;
-        public bool IsLeft
-        {
-            get => _idLeft;
-            set
-            {
-                _idLeft = value;
-                OnPropertyChanged();
-            }
-        }
-
         private Subject _rightSelectedSubject;
         public Subject RightSelectedSubject
         {
@@ -57,6 +46,81 @@ namespace BusinessPredictions
             {
                 _rightSelectedSubject = value;
                 LoadSelectedSubjectFrases(_rightSelectedSubject, RightFrases, RightFrase);
+                OnPropertyChanged();
+            }
+        }
+
+        private Subject _leftSubjectToAdd;
+        public Subject LeftSubjectToAdd
+        {
+            get 
+            {
+                if (_leftSubjectToAdd != null)
+                    _leftSubjectToAdd = new Subject();
+                return _leftSubjectToAdd;
+            }
+            set
+            {
+                _leftSubjectToAdd = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private Subject _rightSubjectToAdd;
+        public Subject RightSubjectToAdd
+        {
+            get 
+            {
+                if(_rightSubjectToAdd != null)
+                    _rightSubjectToAdd = new Subject();
+                return _rightSubjectToAdd;
+            } 
+            set
+            {
+                _rightSubjectToAdd = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private Frase _leftFraseToAdd;
+        public Frase LeftFraseToAdd
+        {
+            get
+            {
+                if (_leftFraseToAdd == null)
+                    _leftFraseToAdd = new Frase() { IsLeft = true };
+
+                return _leftFraseToAdd;
+            }
+            set
+            {
+                _leftFraseToAdd = value;
+                OnPropertyChanged();
+            }
+        }
+        private Frase _rightFraseToAdd;
+        public Frase RightFraseToAdd 
+        {
+            get 
+            {
+                if (_rightFraseToAdd == null)
+                    _rightFraseToAdd = new Frase() { IsLeft = false}; 
+               return  _rightFraseToAdd;
+            }
+            set
+            {
+                _rightFraseToAdd = value;
+                OnPropertyChanged();
+            }
+        } 
+
+        private bool _idLeft;
+        public bool IsLeft
+        {
+            get => _idLeft;
+            set
+            {
+                _idLeft = value;
                 OnPropertyChanged();
             }
         }
@@ -144,10 +208,10 @@ namespace BusinessPredictions
             LeftFrase = new Frase();
         }
 
-        internal async void DeleteSelected(TextBox textBox)
+        internal async void DeleteSelected(object dataContext)
         {
 
-            if (textBox.DataContext is Frase fraseToDelete)
+            if (dataContext is Frase fraseToDelete)
             {
                 await Task.Run(() =>
                 {
@@ -161,7 +225,7 @@ namespace BusinessPredictions
                 }).ConfigureAwait(false);
             }
 
-            else if (textBox.DataContext is Subject subjectToDelete)
+            else if (dataContext is Subject subjectToDelete)
             {
                 await Task.Run(() =>
                 {
@@ -180,43 +244,51 @@ namespace BusinessPredictions
                 }).ConfigureAwait(false);
 
             }
-            throw new NotImplementedException();
+            else 
+            { 
+                throw new NotImplementedException();
+            }
         }
 
-        internal async void AddSelected(TextBox textBox)
+        internal async void AddSelected(object DataContext)
         {
-            if (textBox.DataContext is Frase fraseToAdd)
+            if (DataContext is Frase fraseToAdd)
             {
                 await Task.Run(() =>
                 {
                     using (var context = new DataContext())
                     {
-                        if (fraseToAdd.Text == LeftFrase.Text) // refactor DRY this
-                        {
-                            fraseToAdd.IsLeft = true;
-                            var subject = context.Subjects.FirstOrDefault(x => x.Id == LeftSelectedSubject.Id);
-                            if (subject == null) return;
-                            fraseToAdd.Subject = subject;
-                        }
-                        else if (fraseToAdd.Text == RightFrase.Text)
-                        {
-                            fraseToAdd.IsLeft = false;
-                            var subject = context.Subjects.FirstOrDefault(x => x.Id == RightSelectedSubject.Id);
-                            if (subject == null) return;
-                            fraseToAdd.Subject = RightSelectedSubject;
-                            fraseToAdd.Subject = subject;
-                        }
-                        else
-                            return;
+                        Subject subjectDb = null;
 
+                        Subject Subjectlocal = null;
+
+                        Subjectlocal = fraseToAdd.IsLeft ? LeftSelectedSubject : RightSelectedSubject;
+
+                        int selectedElementId = fraseToAdd.IsLeft ? LeftSelectedSubject.Id : RightSelectedSubject.Id;
+
+                        subjectDb = context.Subjects.FirstOrDefault(x => x.Id == selectedElementId);
+
+                        if (subjectDb == null) return;
+
+                        fraseToAdd.Subject = subjectDb;
 
                         context.Frases.Add(fraseToAdd);
+
                         context.SaveChanges();
+
+                        fraseToAdd.Subject = Subjectlocal;
+
+                        Subjectlocal.Frases.Add(fraseToAdd);
+
+                        DataContext = new Frase() { IsLeft = fraseToAdd.IsLeft }; 
+
+                        OnPropertyChanged(fraseToAdd.IsLeft ? "LeftFraseToAdd" : "RightFraseToAdd");
+                        OnPropertyChanged(fraseToAdd.IsLeft ? "LeftFrases" : "RightFrases");
                     }
                 }).ConfigureAwait(false);
             }
 
-            else if (textBox.DataContext is Subject subjectToAdd)
+            else if (DataContext is Subject subjectToAdd)
             {
                 await Task.Run(() =>
                 {
@@ -225,9 +297,11 @@ namespace BusinessPredictions
                         context.Subjects.Add(subjectToAdd);
 
                         context.SaveChanges();
+                        Subjects.Add(subjectToAdd);
                     }
                 }).ConfigureAwait(false);
             }
+
         }
     }
 }

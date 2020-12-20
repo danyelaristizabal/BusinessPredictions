@@ -63,7 +63,8 @@
                         <Button Style="{StaticResource MaterialDesignFloatingActionMiniAccentButton}" 
                                 Background="{x:Null}" 
                                 BorderBrush="{x:Null}"  
-                                Foreground="#FF31577E">
+                                Foreground="#FF31577E"
+                                Click="AddElement_Click">
                             <materialDesign:PackIcon Kind="Add" Width="25" Height="25"/>
                         </Button>
                     </Border>                   
@@ -74,7 +75,8 @@
                         <Button Style="{StaticResource MaterialDesignFloatingActionMiniAccentButton}"
                                 Background="{x:Null}" 
                                 BorderBrush="{x:Null}"  
-                                Foreground="#FF31577E">
+                                Foreground="#FF31577E"
+                                Click="DeleteSelectedElement_Click">
                             <materialDesign:PackIcon Kind="Delete"  Width="25" Height="25"/>
                         </Button>
                     </Border>                   
@@ -111,14 +113,15 @@
                     CornerRadius="11" >
                     <TextBox  x:Name="SubjectsRightInput"  
                               KeyDown="TextBox_OnKeyDown" 
-                              DataContext="{Binding DataContext.RightSelectedSubject, RelativeSource={RelativeSource AncestorType=Grid}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"  
+                              DataContext="{Binding DataContext.RightSubjectToAdd, RelativeSource={RelativeSource AncestorType=Grid}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"  
                               Text="{Binding SubjectName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
                               FontSize="18" 
                               Foreground="Black" 
                               FontStyle="Italic"  
                               MinHeight="30" 
                               VerticalAlignment="Bottom" 
-                              Margin="5"/>
+                              Margin="5"
+                              TextChanged="TextChangedInput_TextChanged"/>
                 </Border>
                 
                 <!--Left input for subjects -->
@@ -131,7 +134,7 @@
                         CornerRadius="11" >
                     <TextBox Name="LeftSubjectsInput" 
                              KeyDown="TextBox_OnKeyDown" 
-                             DataContext="{Binding DataContext.LeftSelectedSubject, 
+                             DataContext="{Binding DataContext.LeftSubjectToAdd, 
                                                    RelativeSource={RelativeSource AncestorType=Grid}, 
                                                    Mode=TwoWay, 
                                                    UpdateSourceTrigger=PropertyChanged}"  
@@ -141,7 +144,9 @@
                              Foreground="Black" 
                              FontStyle="Italic" 
                              VerticalAlignment="Bottom" 
-                             Margin="5"/>
+                             Margin="5"
+                             TextChanged="TextChangedInput_TextChanged"
+                             />
                 </Border>
                 
                 <!--Right list of subjects -->
@@ -150,7 +155,16 @@
                                 Mode=TwoWay, 
                                 Converter={StaticResource InverseBooleanConverter}}"  
                     Margin="10,5,10,5" Grid.Row="2" Grid.Column="1"  Background="WhiteSmoke" BorderBrush="#FF000000"  BorderThickness="0" CornerRadius="11" >
-                    <ListBox ItemsSource="{Binding DataContext.Subjects, RelativeSource={RelativeSource AncestorType=Grid}}" SelectedItem="{Binding RightSelectedSubject}" Margin="5" Grid.Row="2" Grid.RowSpan="2" Grid.Column="0" Grid.ColumnSpan='3'>
+                    <ListBox Name="RightSubjectsListBox" 
+                             ItemsSource="{Binding DataContext.Subjects, RelativeSource={RelativeSource AncestorType=Grid}}" 
+                             SelectedItem="{Binding RightSelectedSubject}" 
+                             Margin="5" 
+                             Grid.Row="2" 
+                             Grid.RowSpan="2" 
+                             Grid.Column="0" 
+                             Grid.ColumnSpan='3'
+                             SelectionChanged="ListBox_SelectionChanged"
+                             >
                         <ListBox.ItemTemplate>
                             <DataTemplate>
                                 <TextBlock Text="{Binding SubjectName}"  FontSize="16"/>
@@ -170,7 +184,16 @@
                         BorderThickness="0" 
                         CornerRadius="11" >
 
-                    <ListBox ItemsSource="{Binding DataContext.Subjects, RelativeSource={RelativeSource AncestorType=Grid}}" SelectedItem="{Binding LeftSelectedSubject}" Margin="5,5,5,0" Grid.Row="2" Grid.RowSpan="2" Grid.Column="0" Grid.ColumnSpan='3' >
+                    <ListBox x:Name="LeftSubjectsListBox" 
+                             ItemsSource="{Binding DataContext.Subjects, RelativeSource={RelativeSource AncestorType=Grid}}" 
+                             SelectedItem="{Binding LeftSelectedSubject}" 
+                             Margin="5,5,5,0" 
+                             Grid.Row="2" 
+                             Grid.RowSpan="2" 
+                             Grid.Column="0" 
+                             Grid.ColumnSpan='3' 
+                             SelectionChanged="ListBox_SelectionChanged"
+                             >
                         <ListBox.ItemTemplate>
                             <DataTemplate>
                                 <TextBlock Text="{Binding SubjectName}"  FontSize="16"/>
@@ -188,7 +211,7 @@
                         Margin="10 5" Grid.Column="2"  Grid.Row="1"  Background="WhiteSmoke" BorderBrush="#FF000000"  BorderThickness="0" CornerRadius="11" >
 
                     <TextBox x:Name="FraseInputLeftFrases" KeyDown="TextBox_OnKeyDown"
-                               DataContext="{Binding DataContext.LeftFrase, RelativeSource={RelativeSource AncestorType=Grid}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"  
+                               DataContext="{Binding DataContext.LeftFraseToAdd, RelativeSource={RelativeSource AncestorType=Grid}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"  
                              Text="{Binding Text, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"  
                              MinHeight="30" 
                              VerticalAlignment="Bottom" 
@@ -198,7 +221,10 @@
                              FontSize="18"  
                              Foreground="Black" 
                              Grid.ColumnSpan="9" 
-                             Grid.Row="1"/>
+                             Grid.Row="1"
+                             TextChanged="TextChangedInput_TextChanged"
+
+                             />
                 </Border>
                 
                 <Border Visibility="{Binding DataContext.IsLeft, 
@@ -212,7 +238,15 @@
                          BorderBrush="#FF000000"  
                          BorderThickness="0" 
                          CornerRadius="11" >
-                    <ListBox ItemsSource="{Binding DataContext.LeftFrases, RelativeSource={RelativeSource AncestorType=Grid}}" SelectedItem="{Binding LeftFrase}"  Margin="5" Grid.Row="2" Grid.RowSpan="2" Grid.Column="2" Grid.ColumnSpan="8">
+                    <ListBox Name="LeftFrasesListBox" 
+                             ItemsSource="{Binding DataContext.LeftFrases, RelativeSource={RelativeSource AncestorType=Grid}}" 
+                             SelectedItem="{Binding LeftFrase}"  
+                             Margin="5" 
+                             Grid.Row="2" 
+                             Grid.RowSpan="2" 
+                             Grid.Column="2" 
+                             Grid.ColumnSpan="8"
+                             SelectionChanged="ListBox_SelectionChanged">
                         <ListBox.ItemTemplate>
                             <DataTemplate>
                                 <TextBlock Text="{Binding Text}"  FontSize="16"/>
@@ -230,7 +264,7 @@
                         Margin="10 5" Grid.Column="2"  Grid.Row="1"  Background="WhiteSmoke" BorderBrush="#FF000000"  BorderThickness="0" CornerRadius="11" >
 
                     <TextBox x:Name="FraseInputRightFrases" KeyDown="TextBox_OnKeyDown"
-                               DataContext="{Binding DataContext.RightFrase, RelativeSource={RelativeSource AncestorType=Grid}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"  
+                               DataContext="{Binding DataContext.RightFraseToAdd, RelativeSource={RelativeSource AncestorType=Grid}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"  
                              Text="{Binding Text, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"  
                              MinHeight="30" 
                              VerticalAlignment="Bottom" 
@@ -240,7 +274,8 @@
                              FontSize="18"  
                              Foreground="Black" 
                              Grid.ColumnSpan="9" 
-                             Grid.Row="1"/>
+                             Grid.Row="1"
+                             TextChanged="TextChangedInput_TextChanged"/>
                 </Border>
                 <Border Visibility="{Binding DataContext.IsLeft, 
                                     RelativeSource={RelativeSource AncestorType=Grid},
@@ -254,13 +289,15 @@
                         BorderThickness="0" 
                         CornerRadius="11" >
                     
-                    <ListBox ItemsSource="{Binding DataContext.RightFrases, RelativeSource={RelativeSource AncestorType=Grid}}" 
+                    <ListBox x:Name="RightFrasesListBox" ItemsSource="{Binding DataContext.RightFrases, RelativeSource={RelativeSource AncestorType=Grid}}" 
                              SelectedItem="{Binding RightFrase}"  
                              Margin="5" 
                              Grid.Row="2"
                              Grid.RowSpan="2" 
                              Grid.Column="2" 
-                             Grid.ColumnSpan="8">
+                             Grid.ColumnSpan="8"
+                             SelectionChanged="ListBox_SelectionChanged"
+                             >
                         <ListBox.ItemTemplate>
                             <DataTemplate>
                                 <TextBlock Text="{Binding Text}"  FontSize="16"/>
