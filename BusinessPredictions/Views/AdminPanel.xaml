@@ -156,7 +156,7 @@
                                 Converter={StaticResource InverseBooleanConverter}}"  
                     Margin="10,5,10,5" Grid.Row="2" Grid.Column="1"  Background="WhiteSmoke" BorderBrush="#FF000000"  BorderThickness="0" CornerRadius="11" >
                     <ListBox Name="RightSubjectsListBox" 
-                             ItemsSource="{Binding DataContext.Subjects, RelativeSource={RelativeSource AncestorType=Grid}}" 
+                             ItemsSource="{Binding DataContext.Subjects, RelativeSource={RelativeSource AncestorType=Grid}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
                              SelectedItem="{Binding RightSelectedSubject}" 
                              Margin="5" 
                              Grid.Row="2" 
@@ -185,7 +185,7 @@
                         CornerRadius="11" >
 
                     <ListBox x:Name="LeftSubjectsListBox" 
-                             ItemsSource="{Binding DataContext.Subjects, RelativeSource={RelativeSource AncestorType=Grid}}" 
+                             ItemsSource="{Binding DataContext.Subjects, RelativeSource={RelativeSource AncestorType=Grid}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
                              SelectedItem="{Binding LeftSelectedSubject}" 
                              Margin="5,5,5,0" 
                              Grid.Row="2" 
@@ -239,7 +239,7 @@
                          BorderThickness="0" 
                          CornerRadius="11" >
                     <ListBox Name="LeftFrasesListBox" 
-                             ItemsSource="{Binding DataContext.LeftFrases, RelativeSource={RelativeSource AncestorType=Grid}}" 
+                             ItemsSource="{Binding DataContext.LeftFrases, RelativeSource={RelativeSource AncestorType=Grid}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
                              SelectedItem="{Binding LeftFrase}"  
                              Margin="5" 
                              Grid.Row="2" 
@@ -288,8 +288,9 @@
                         BorderBrush="#FF000000"  
                         BorderThickness="0" 
                         CornerRadius="11" >
-                    
-                    <ListBox x:Name="RightFrasesListBox" ItemsSource="{Binding DataContext.RightFrases, RelativeSource={RelativeSource AncestorType=Grid}}" 
+
+                    <ListBox x:Name="RightFrasesListBox" 
+                             ItemsSource="{Binding DataContext.RightFrases, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, RelativeSource={RelativeSource AncestorType=Grid}}" 
                              SelectedItem="{Binding RightFrase}"  
                              Margin="5" 
                              Grid.Row="2"

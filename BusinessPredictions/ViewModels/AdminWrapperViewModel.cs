@@ -8,6 +8,10 @@ namespace BusinessPredictions
 {
     public class AdminWrapperViewModel : Notifier
     {
+        public string ConcatenatedSentence
+        {
+            get => (LeftFrase?.Text ?? default) + " " + (RightFrase?.Text ?? default);
+        }
         public ObservableCollection<Subject> Subjects
         {
             get
@@ -25,7 +29,6 @@ namespace BusinessPredictions
                     ourPlayPanel.GameWrapperVM.Subjects = value;
             }
         }
-
         private Subject _leftSelectedSubject;
         public Subject LeftSelectedSubject
         {
@@ -33,11 +36,11 @@ namespace BusinessPredictions
             set
             {
                 _leftSelectedSubject = value;
+                if(_leftSelectedSubject != null)
                 LoadSelectedSubjectFrases(_leftSelectedSubject, LeftFrases, LeftFrase, true);
                 OnPropertyChanged();
             }
         }
-
         private Subject _rightSelectedSubject;
         public Subject RightSelectedSubject
         {
@@ -45,18 +48,19 @@ namespace BusinessPredictions
             set
             {
                 _rightSelectedSubject = value;
-                LoadSelectedSubjectFrases(_rightSelectedSubject, RightFrases, RightFrase);
+                if (_rightSelectedSubject != null)
+                    LoadSelectedSubjectFrases(_rightSelectedSubject, RightFrases, RightFrase);
                 OnPropertyChanged();
             }
         }
-
         private Subject _leftSubjectToAdd;
         public Subject LeftSubjectToAdd
         {
             get 
             {
-                if (_leftSubjectToAdd != null)
+                if (_leftSubjectToAdd == null)
                     _leftSubjectToAdd = new Subject();
+
                 return _leftSubjectToAdd;
             }
             set
@@ -65,14 +69,14 @@ namespace BusinessPredictions
                 OnPropertyChanged();
             }
         }
-
         private Subject _rightSubjectToAdd;
         public Subject RightSubjectToAdd
         {
-            get 
+            get
             {
-                if(_rightSubjectToAdd != null)
+                if(_rightSubjectToAdd == null)
                     _rightSubjectToAdd = new Subject();
+
                 return _rightSubjectToAdd;
             } 
             set
@@ -81,7 +85,6 @@ namespace BusinessPredictions
                 OnPropertyChanged();
             }
         }
-
         private Frase _leftFraseToAdd;
         public Frase LeftFraseToAdd
         {
@@ -113,7 +116,6 @@ namespace BusinessPredictions
                 OnPropertyChanged();
             }
         } 
-
         private bool _idLeft;
         public bool IsLeft
         {
@@ -124,7 +126,6 @@ namespace BusinessPredictions
                 OnPropertyChanged();
             }
         }
-
         private Frase _leftFrase;
         public Frase LeftFrase
         {
@@ -136,11 +137,6 @@ namespace BusinessPredictions
                 OnPropertyChanged("ConcatenatedSentence");
             }
         }
-        public string ConcatenatedSentence
-        {
-            get => (LeftFrase?.Text ?? default) + " " + (RightFrase?.Text ?? default);
-        }
-
         private Frase _rightFrase;
         public Frase RightFrase
         {
@@ -186,20 +182,18 @@ namespace BusinessPredictions
                 OnPropertyChanged();
             }
         }
-
         public void LoadSelectedSubjectFrases(Subject selectedSubject, ObservableCollection<Frase> frasesList, Frase selectedFrase, bool isLeft = false)
         {
             frasesList.Clear();
-            selectedSubject.Frases.ForEach(f =>
+            foreach (var f in selectedSubject.Frases)
             {
                 if (f.IsLeft == isLeft)
                     frasesList.Add(f);
-            });
-
+            }
+          
             if (frasesList.Count > 0)
                 selectedFrase = frasesList[0];
         }
-
         internal void ClearAllSelected()
         {
             LeftSelectedSubject = new Subject();
@@ -207,7 +201,6 @@ namespace BusinessPredictions
             RightFrase = new Frase();
             LeftFrase = new Frase();
         }
-
         internal async void DeleteSelected(object dataContext)
         {
 
@@ -221,8 +214,22 @@ namespace BusinessPredictions
                         context.Frases.RemoveRange(frasesToDelete);
                         context.SaveChanges();
                     }
+                }).ConfigureAwait(true);
 
-                }).ConfigureAwait(false);
+
+                fraseToDelete.Subject.Frases.Remove(fraseToDelete);
+
+                if (fraseToDelete.IsLeft)
+                {
+                    LeftFrases.Remove(fraseToDelete);
+                }
+                else 
+                {
+                    RightFrases.Remove(fraseToDelete);
+                }
+                OnPropertyChanged(fraseToDelete.IsLeft ? "LeftFrases" : "RightFrases");
+
+                fraseToDelete = null;
             }
 
             else if (dataContext is Subject subjectToDelete)
@@ -240,68 +247,99 @@ namespace BusinessPredictions
                             context.Subjects.Remove(subject);
                         }
                         context.SaveChanges();
+                        foreach (var frase in subjectToDelete.Frases)
+                        {
+                            subjectToDelete.Frases.Remove(frase); 
+                        }
                     }
-                }).ConfigureAwait(false);
+                }).ConfigureAwait(true);
+                Subjects.Remove(subjectToDelete);
 
+                OnPropertyChanged("Subjects");
+                OnPropertyChanged("LeftFrases");
+                OnPropertyChanged("RightFrases");
             }
             else 
             { 
                 throw new NotImplementedException();
             }
         }
-
         internal async void AddSelected(object DataContext)
         {
             if (DataContext is Frase fraseToAdd)
             {
-                await Task.Run(() =>
-                {
-                    using (var context = new DataContext())
-                    {
-                        Subject subjectDb = null;
-
-                        Subject Subjectlocal = null;
-
-                        Subjectlocal = fraseToAdd.IsLeft ? LeftSelectedSubject : RightSelectedSubject;
-
-                        int selectedElementId = fraseToAdd.IsLeft ? LeftSelectedSubject.Id : RightSelectedSubject.Id;
-
-                        subjectDb = context.Subjects.FirstOrDefault(x => x.Id == selectedElementId);
-
-                        if (subjectDb == null) return;
-
-                        fraseToAdd.Subject = subjectDb;
-
-                        context.Frases.Add(fraseToAdd);
-
-                        context.SaveChanges();
-
-                        fraseToAdd.Subject = Subjectlocal;
-
-                        Subjectlocal.Frases.Add(fraseToAdd);
-
-                        DataContext = new Frase() { IsLeft = fraseToAdd.IsLeft }; 
-
-                        OnPropertyChanged(fraseToAdd.IsLeft ? "LeftFraseToAdd" : "RightFraseToAdd");
-                        OnPropertyChanged(fraseToAdd.IsLeft ? "LeftFrases" : "RightFrases");
-                    }
-                }).ConfigureAwait(false);
+                await AddFrase(fraseToAdd);
             }
-
             else if (DataContext is Subject subjectToAdd)
             {
-                await Task.Run(() =>
-                {
-                    using (var context = new DataContext())
-                    {
-                        context.Subjects.Add(subjectToAdd);
-
-                        context.SaveChanges();
-                        Subjects.Add(subjectToAdd);
-                    }
-                }).ConfigureAwait(false);
+                await AddSubject(subjectToAdd);
             }
+        }
+        private async Task AddSubject(Subject subjectToAdd)
+        {
+            await Task.Run(() =>
+            {
+                using (var context = new DataContext())
+                {
+                    context.Subjects.Add(subjectToAdd);
 
+                    context.SaveChanges();
+                }
+            }).ConfigureAwait(true);
+            Subjects.Add(subjectToAdd);
+
+            if (LeftSubjectToAdd == subjectToAdd)
+                LeftSubjectToAdd = null;
+            else if (RightSubjectToAdd == subjectToAdd)
+                RightSubjectToAdd = null;
+
+            OnPropertyChanged("RightSubjectToAdd");
+            OnPropertyChanged("LeftSubjectToAdd");
+        }
+        private async Task AddFrase(Frase fraseToAdd)
+        {
+            await Task.Run(() =>
+            {
+                using (var context = new DataContext())
+                {
+                    Subject subjectDb = null;
+
+                    Subject Subjectlocal = null;
+
+                    Subjectlocal = fraseToAdd.IsLeft ? LeftSelectedSubject : RightSelectedSubject;
+
+                    int selectedElementId = fraseToAdd.IsLeft ? LeftSelectedSubject.Id : RightSelectedSubject.Id;
+
+                    subjectDb = context.Subjects.FirstOrDefault(x => x.Id == selectedElementId);
+
+                    if (subjectDb == null) return;
+
+                    fraseToAdd.Subject = subjectDb;
+
+                    context.Frases.Add(fraseToAdd);
+
+                    context.SaveChanges();
+
+                    fraseToAdd.Subject = Subjectlocal;
+                }
+            }).ConfigureAwait(true);
+
+            if (fraseToAdd.IsLeft)
+            {
+                LeftSelectedSubject.Frases.Add(fraseToAdd);
+                LeftFrases.Add(fraseToAdd); 
+                LeftFraseToAdd = null ;
+                OnPropertyChanged("LeftSelectedSubject");
+                OnPropertyChanged("LeftFrases");
+            }
+            else 
+            {
+                RightSelectedSubject.Frases.Add(fraseToAdd);
+                RightFrases.Add(fraseToAdd); 
+                RightFraseToAdd = null; 
+                OnPropertyChanged("RightSelectedSubject");
+                OnPropertyChanged("RightFrases");
+            }
         }
     }
 }

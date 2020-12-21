@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore.ChangeTracking.Internal;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 
 namespace BusinessPredictions
@@ -17,14 +18,19 @@ namespace BusinessPredictions
             }
         }
         public int Id { get; set; }
-        List<Frase> _frases = new List<Frase>();
-        public List<Frase> Frases
+        ObservableCollection<Frase> _frases = new ObservableCollection<Frase>();
+        public ObservableCollection<Frase> Frases
         {
             get
             {
                 if (_frases.Count == 0)
-                    using (var dataContext = new DataContext())
-                        _frases = dataContext.Frases.Where(f => f.SubjectRefId == Id).ToList();
+                    using (var dataContext = new DataContext()) 
+                    {
+                        foreach (var item in dataContext.Frases.Where(f => f.SubjectRefId == Id))
+                        {
+                            _frases.Add(item); 
+                        }
+                    }
 
                 return _frases;
             }
