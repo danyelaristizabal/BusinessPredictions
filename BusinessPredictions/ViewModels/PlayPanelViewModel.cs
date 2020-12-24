@@ -83,8 +83,7 @@ namespace BusinessPredictions
         {
             if (sourceFrase == null || sourceFrase.Frases.Count == 0) return new Frase();
             var oneSideFrases = sourceFrase.Frases.Where(f => f.IsLeft == isLeft);
-            int max = oneSideFrases.Count() - 1;
-            return oneSideFrases.ElementAt(Randomizer.Next(0, max));
+            return oneSideFrases.ElementAt(Randomizer.Next(0, oneSideFrases.Count()));
         }
         internal async void LoadData()
         {

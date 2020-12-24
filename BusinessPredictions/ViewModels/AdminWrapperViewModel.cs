@@ -36,8 +36,8 @@ namespace BusinessPredictions
             set
             {
                 _leftSelectedSubject = value;
-                if(_leftSelectedSubject != null)
-                LoadSelectedSubjectFrases(_leftSelectedSubject, LeftFrases, LeftFrase, true);
+                if (_leftSelectedSubject != null)
+                    LoadSelectedSubjectFrases(_leftSelectedSubject, LeftFrases, LeftFrase, true);
                 OnPropertyChanged();
             }
         }
@@ -56,7 +56,7 @@ namespace BusinessPredictions
         private Subject _leftSubjectToAdd;
         public Subject LeftSubjectToAdd
         {
-            get 
+            get
             {
                 if (_leftSubjectToAdd == null)
                     _leftSubjectToAdd = new Subject();
@@ -74,11 +74,11 @@ namespace BusinessPredictions
         {
             get
             {
-                if(_rightSubjectToAdd == null)
+                if (_rightSubjectToAdd == null)
                     _rightSubjectToAdd = new Subject();
 
                 return _rightSubjectToAdd;
-            } 
+            }
             set
             {
                 _rightSubjectToAdd = value;
@@ -102,20 +102,20 @@ namespace BusinessPredictions
             }
         }
         private Frase _rightFraseToAdd;
-        public Frase RightFraseToAdd 
+        public Frase RightFraseToAdd
         {
-            get 
+            get
             {
                 if (_rightFraseToAdd == null)
-                    _rightFraseToAdd = new Frase() { IsLeft = false}; 
-               return  _rightFraseToAdd;
+                    _rightFraseToAdd = new Frase() { IsLeft = false };
+                return _rightFraseToAdd;
             }
             set
             {
                 _rightFraseToAdd = value;
                 OnPropertyChanged();
             }
-        } 
+        }
         private bool _idLeft;
         public bool IsLeft
         {
@@ -190,7 +190,7 @@ namespace BusinessPredictions
                 if (f.IsLeft == isLeft)
                     frasesList.Add(f);
             }
-          
+
             if (frasesList.Count > 0)
                 selectedFrase = frasesList[0];
         }
@@ -223,7 +223,7 @@ namespace BusinessPredictions
                 {
                     LeftFrases.Remove(fraseToDelete);
                 }
-                else 
+                else
                 {
                     RightFrases.Remove(fraseToDelete);
                 }
@@ -249,7 +249,7 @@ namespace BusinessPredictions
                         context.SaveChanges();
                         foreach (var frase in subjectToDelete.Frases)
                         {
-                            subjectToDelete.Frases.Remove(frase); 
+                            subjectToDelete.Frases.Remove(frase);
                         }
                     }
                 }).ConfigureAwait(true);
@@ -259,8 +259,8 @@ namespace BusinessPredictions
                 OnPropertyChanged("LeftFrases");
                 OnPropertyChanged("RightFrases");
             }
-            else 
-            { 
+            else
+            {
                 throw new NotImplementedException();
             }
         }
@@ -314,7 +314,7 @@ namespace BusinessPredictions
 
                     if (subjectDb == null) return;
 
-                    fraseToAdd.Subject = subjectDb;
+                    fraseToAdd.Subject = Subjectlocal;
 
                     context.Frases.Add(fraseToAdd);
 
@@ -327,16 +327,16 @@ namespace BusinessPredictions
             if (fraseToAdd.IsLeft)
             {
                 LeftSelectedSubject.Frases.Add(fraseToAdd);
-                LeftFrases.Add(fraseToAdd); 
-                LeftFraseToAdd = null ;
+                LeftFrases.Add(fraseToAdd);
+                LeftFraseToAdd = null;
                 OnPropertyChanged("LeftSelectedSubject");
                 OnPropertyChanged("LeftFrases");
             }
-            else 
+            else
             {
                 RightSelectedSubject.Frases.Add(fraseToAdd);
-                RightFrases.Add(fraseToAdd); 
-                RightFraseToAdd = null; 
+                RightFrases.Add(fraseToAdd);
+                RightFraseToAdd = null;
                 OnPropertyChanged("RightSelectedSubject");
                 OnPropertyChanged("RightFrases");
             }
