@@ -48,6 +48,16 @@ namespace BusinessPredictions
                 default:
                     break;
             }
+
+            if (ButtonCloseMenu.Visibility == Visibility.Visible)
+            {
+                ButtonCloseMenu.Visibility = Visibility.Collapsed;
+                ButtonOpenMenu.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                e.Handled = true;
+            }
         }
     }
 }

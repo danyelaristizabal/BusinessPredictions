@@ -16,16 +16,16 @@
         >
     
     <Window.Resources>
-        <Storyboard x:Key="OpenMenu">
+        <Storyboard x:Name="StoryBoardOpen" x:Key="OpenMenu">
             <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(FrameworkElement.Width)" Storyboard.TargetName="GridMenu">
                 <EasingDoubleKeyFrame KeyTime="0" Value="70"/>
                 <EasingDoubleKeyFrame KeyTime="0:0:0.2" Value="200"/>
             </DoubleAnimationUsingKeyFrames>
         </Storyboard>
-        <Storyboard x:Key="CloseMenu">
+        <Storyboard  x:Name="StoryBoardClose" x:Key="CloseMenu">
             <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(FrameworkElement.Width)" Storyboard.TargetName="GridMenu">
                 <EasingDoubleKeyFrame KeyTime="0" Value="200"/>
-                <EasingDoubleKeyFrame KeyTime="0:0:0.5" Value="70"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:0.2" Value="70"/>
             </DoubleAnimationUsingKeyFrames>
         </Storyboard>
         
@@ -40,7 +40,12 @@
         <EventTrigger RoutedEvent="ButtonBase.Click" SourceName="ButtonCloseMenu">
             <BeginStoryboard Storyboard="{StaticResource CloseMenu}"/>
         </EventTrigger>
+
+        <EventTrigger RoutedEvent="ListView.SelectionChanged" SourceName="ListViewMenu">
+            <BeginStoryboard Storyboard="{StaticResource CloseMenu}"/>
+        </EventTrigger>
         
+ 
     </Window.Triggers>
 
     <Grid>
