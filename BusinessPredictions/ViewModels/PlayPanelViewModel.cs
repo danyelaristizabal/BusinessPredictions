@@ -34,7 +34,6 @@ namespace BusinessPredictions
             set
             {
                 _leftSelectedSubject = value;
-                LeftFrase = SelectRandomlyOrDefault(_leftSelectedSubject, true);
                 OnPropertyChanged();
             }
         }
@@ -46,7 +45,6 @@ namespace BusinessPredictions
             set
             {
                 _rightSelectedSubject = value;
-                RightFrase = SelectRandomlyOrDefault(_rightSelectedSubject);
                 OnPropertyChanged();
             }
         }
@@ -79,11 +77,27 @@ namespace BusinessPredictions
             }
         }
 
-        private Frase SelectRandomlyOrDefault(Subject sourceFrase, bool isLeft = false)
+        public void SelectRandomlyOrDefault(Subject sourceFrase, bool isLeft = false)
         {
-            if (sourceFrase == null || sourceFrase.Frases.Count == 0) return new Frase();
+            if (sourceFrase == null || sourceFrase.Frases.Count == 0) return;
+
             var oneSideFrases = sourceFrase.Frases.Where(f => f.IsLeft == isLeft);
-            return oneSideFrases.ElementAt(Randomizer.Next(0, oneSideFrases.Count()));
+
+            var current = isLeft ? LeftFrase : RightFrase;
+
+            var frase = oneSideFrases.ElementAt(Randomizer.Next(0, oneSideFrases.Count()));
+            if (current != null)
+                while (current.Id == frase.Id && oneSideFrases.Count() > 1)
+                {
+                    frase = oneSideFrases.ElementAt(Randomizer.Next(0, oneSideFrases.Count()));
+                }
+
+            if (isLeft)
+                LeftFrase = frase;
+            else
+                RightFrase = frase;
+
+            OnPropertyChanged("ConcatenatedSentence");
         }
         internal async void LoadData()
         {
