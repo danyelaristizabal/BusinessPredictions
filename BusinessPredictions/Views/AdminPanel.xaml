@@ -80,15 +80,7 @@
                             <materialDesign:PackIcon Kind="Delete"  Width="25" Height="25"/>
                         </Button>
                     </Border>                   
-                    <Border Margin="5 0" BorderThickness="0" CornerRadius="11" >
-                        <Button  
-                            Click="Clear_ButtonClick"  
-                            Style="{StaticResource MaterialDesignFloatingActionMiniAccentButton}" 
-                            Background="{x:Null}" 
-                            BorderBrush="{x:Null}"  Foreground="#FF31577E">
-                            <materialDesign:PackIcon Kind="FormatClear" Width="25" Height="25"/>
-                        </Button>
-                    </Border>
+             
 
                     <ToggleButton
                      x:Name="ToggleButton"

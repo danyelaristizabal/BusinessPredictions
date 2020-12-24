@@ -314,7 +314,7 @@ namespace BusinessPredictions
 
                     if (subjectDb == null) return;
 
-                    fraseToAdd.Subject = Subjectlocal;
+                    fraseToAdd.Subject = subjectDb;
 
                     context.Frases.Add(fraseToAdd);
 
