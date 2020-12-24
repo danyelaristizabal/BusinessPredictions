@@ -26,20 +26,34 @@
             </Grid>
         
             <Border Margin="10 30" Grid.Row="1" Grid.RowSpan="2" Grid.Column="2" Background="WhiteSmoke" BorderBrush="#FF000000"  BorderThickness="0" CornerRadius="11" >
-                <ListBox ItemsSource="{Binding DataContext.Subjects, RelativeSource={RelativeSource AncestorType=Grid}}" SelectedItem="{Binding RightSelectedSubject}"  Margin="5" Grid.Row="2" Grid.RowSpan="2" Grid.Column="0" Grid.ColumnSpan='3'>
+                <ListBox ItemsSource="{Binding DataContext.Subjects, RelativeSource={RelativeSource AncestorType=Grid}}" SelectedItem="{Binding RightSelectedSubject}" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch"  Margin="5" Grid.Row="2" Grid.RowSpan="2" Grid.Column="0" Grid.ColumnSpan='3'>
+                    <ListBox.ItemContainerStyle>
+                        <Style BasedOn="{StaticResource MaterialDesignListBoxItem}" TargetType="{x:Type ListBoxItem}">
+                            <Setter Property="Padding" Value="0" />
+                        </Style>
+                    </ListBox.ItemContainerStyle>
                     <ListBox.ItemTemplate>
                         <DataTemplate>
-                            <TextBlock Text="{Binding SubjectName}"  FontSize="16"/>
+                            <Grid  MouseDown="RightSubject_Click" >
+                                <TextBlock Margin="10" Text="{Binding SubjectName}"  Focusable="False" FontSize="16"/>
+                            </Grid>
                         </DataTemplate> 
                     </ListBox.ItemTemplate>
                 </ListBox>
             </Border>
 
             <Border Margin="10 30" Grid.Row="1" Grid.RowSpan="2" Background="WhiteSmoke" BorderBrush="#FF000000"  BorderThickness="0" CornerRadius="11" >
-                <ListBox  ItemsSource="{Binding DataContext.Subjects, RelativeSource={RelativeSource AncestorType=Grid}}" SelectedItem="{Binding LeftSelectedSubject}"   Margin="5" Grid.Row="2" Grid.RowSpan="2" Grid.Column="0" Grid.ColumnSpan='3'>
+                <ListBox  ItemsSource="{Binding DataContext.Subjects, RelativeSource={RelativeSource AncestorType=Grid}}"  SelectedItem="{Binding LeftSelectedSubject}"  HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" Margin="5" Grid.Row="2" Grid.RowSpan="2" Grid.Column="0" Grid.ColumnSpan='3'>
+                    <ListBox.ItemContainerStyle>
+                        <Style BasedOn="{StaticResource MaterialDesignListBoxItem}" TargetType="{x:Type ListBoxItem}">
+                            <Setter Property="Padding" Value="0" />
+                        </Style>
+                    </ListBox.ItemContainerStyle>
                     <ListBox.ItemTemplate>
                         <DataTemplate>
-                            <TextBlock Text="{Binding SubjectName}" Focusable="False"  FontSize="16"/>
+                            <Grid MouseDown="LeftSubject_Click" >
+                                <TextBlock Margin="10" Text="{Binding SubjectName}" Focusable="False"  FontSize="16"/>
+                            </Grid>
                         </DataTemplate>
                     </ListBox.ItemTemplate>
                 </ListBox>

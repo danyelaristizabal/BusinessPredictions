@@ -19,5 +19,23 @@ namespace BusinessPredictions
             MainGridWrapper.DataContext = GameWrapperVM;
         }
         private void LoadData() => GameWrapperVM.LoadData();
+
+        private void RightSubject_Click(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            if (sender is Grid rightGrid && rightGrid.DataContext is Subject selectedRightSubject)
+            {
+                GameWrapperVM.SelectRandomlyOrDefault(selectedRightSubject);
+            }
+        }
+        private void LeftSubject_Click(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            if (sender is Grid leftGrid && leftGrid.DataContext is Subject selectedLeftSubject)
+            {
+                GameWrapperVM.SelectRandomlyOrDefault(selectedLeftSubject, true);
+            }
+        }
+
+
+
     }
 }
